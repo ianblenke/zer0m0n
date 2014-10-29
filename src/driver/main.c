@@ -242,7 +242,10 @@ VOID Unload(PDRIVER_OBJECT pDriverObject)
 	cleanMonitoredProcessList();	
 	cleanHiddenProcessList();
 	
-	ExFreePool(cuckooPath);
+	if (cuckooPath)
+	{
+		ExFreePool(cuckooPath);
+	}
 }
  
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

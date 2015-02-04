@@ -43,7 +43,7 @@
 //		Allocate and fill a PMODULE_INFORMATION_TABLE structure depending of the information given in the PEB
 //		It also retrieves information from the system modules and add them to the table
 //	Parameters :
-//		IN ULONG Pid	The targeted process ID	
+//		IN ULONG Pid	The targeted process ID
 //		IN PPEB pPeb	An allocated PEB pointer
 //	Return value :
 //		PMODULE_INFORMATION_TABLE	An allocated PMODULE_INFORMATION_TABLE containing the information about the modules
@@ -96,6 +96,11 @@ CreateModuleInformation (
 	// Allocate a MODULE_INFORMATION_TABLE
 	if ((pModuleInformationTable = ExAllocatePoolWithTag (NonPagedPool, sizeof (MODULE_INFORMATION_TABLE), 'CMI')) == NULL) {
 		Dbg ("Cannot allocate a MODULE_INFORMATION_TABLE.");
+<<<<<<< HEAD
+=======
+		// Cleaning
+		ExFreePool (pSystemModuleInformation);
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 		return NULL;
 	}
 
@@ -104,6 +109,12 @@ CreateModuleInformation (
 			NonPagedPool, Count * sizeof (MODULE_ENTRY), 'CMI2')
 		) == NULL) {
 		Dbg ("Cannot allocate a MODULE_INFORMATION_TABLE.");
+<<<<<<< HEAD
+=======
+		// Cleaning
+		ExFreePool (pModuleInformationTable);
+		ExFreePool (pSystemModuleInformation);
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 		return NULL;
 	}
 
@@ -129,7 +140,11 @@ CreateModuleInformation (
 		RtlCopyMemory (&CurModule->BaseAddress, &pLdrEntry->DllBase,     sizeof (CurModule->BaseAddress));
 		RtlCopyMemory (&CurModule->EntryPoint,  &pLdrEntry->EntryPoint,  sizeof (CurModule->EntryPoint));
 		CurModule->IsSystemModule = FALSE;
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 		// Check if the module is not the current module of the process
 		if (CurModule->BaseAddress == pPeb->ImageBaseAddress) {
 			pModuleInformationTable->ImageModule = CurModule;
@@ -139,11 +154,19 @@ CreateModuleInformation (
 		if (_wcsicmp(CurModule->BaseName.Buffer, L"ntdll.dll") == 0) {
 			pModuleInformationTable->NtdllModule = CurModule;
 		}
+<<<<<<< HEAD
 
 		// Iterate to the next entry
 		pEntry = pEntry->Flink;
 	}
 
+=======
+
+		// Iterate to the next entry
+		pEntry = pEntry->Flink;
+	}
+
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 	// Store all the kernel modules information in the table
 	Count -= CurCount; // Reset index to 0 -> SystemModuleCountMax
 	for (SystemIndex = 0; SystemIndex < Count; SystemIndex++)
@@ -170,13 +193,29 @@ CreateModuleInformation (
 
 		CurModule->EntryPoint = 0;
 		CurModule->IsSystemModule = TRUE;
+<<<<<<< HEAD
 	
+=======
+	
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 		// Check if the module is not the current module of the process
 		if (CurModule->BaseAddress == pPeb->ImageBaseAddress) {
 			pModuleInformationTable->ImageModule = CurModule;
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	// ImageModule should have been detected from this point, check it
+	if (pModuleInformationTable->ImageModule == NULL) {
+		Dbg ("No ImageBaseAddress detected from the modules list.");
+		// Cleaning
+		FreeModuleInformationTable (pModuleInformationTable);
+		ExFreePool (pSystemModuleInformation);
+		return NULL;
+	}
+	
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 	// Cleaning
 	ExFreePool (pSystemModuleInformation);
 
@@ -222,13 +261,21 @@ GetModuleTableEntry (
 //		Checks if the given address is in the given module
 //
 //	Parameters :
+<<<<<<< HEAD
 //		IN DWORD Address										An address to check
 //		IN PMODULE_INFORMATION_TABLE ModuleInformationTable		A pointer to an allocated MODULE_INFORMATION_TABLE
+=======
+//		IN DWORD Address							An address to check
+//      IN PMODULE_ENTRY pModuleTableEntry          A pointer to an allocated MODULE_ENTRY
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 //	Return value :
 //		PMODULE_ENTRY	A pointer to the PMODULE_ENTRY depending of the address given
 //							Returns NULL if the module hasn't been found.
 //	Process :
+<<<<<<< HEAD
 //		Parse for each entry the base address and the size of the module
+=======
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 //		Check if the given address is in bound of the module
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOLEAN
@@ -236,7 +283,12 @@ AddressInModuleTableEntry (
 	IN DWORD Address,
 	IN PMODULE_ENTRY pModuleTableEntry
 ) {
+<<<<<<< HEAD
 	return ((Address >=  (DWORD) pModuleTableEntry->BaseAddress)
+=======
+	return ((pModuleTableEntry != NULL)
+	    &&  (Address >=  (DWORD) pModuleTableEntry->BaseAddress)
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 		&&  (Address <= ((DWORD) pModuleTableEntry->BaseAddress + pModuleTableEntry->SizeOfImage))
 	);
 }
@@ -262,7 +314,11 @@ FreeModuleInformationTable (
 ) {
 	ULONG Index;
 	PMODULE_ENTRY curModule = NULL;
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d
 	ExFreePool (pModuleInformationTable->Modules);
 	ExFreePool (pModuleInformationTable);
 }

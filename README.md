@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-zer0m0n v0.8
-============
+zer0m0n v0.9 (DEVELOPMENT BRANCH)
+=================================
 
 zer0m0n is a driver for Cuckoo Sandbox, it will perform kernel analysis during the execution of a malware. There are many ways for a malware author to bypass Cuckoo detection, he can detect the hooks, hardcodes the Nt* functions to avoid the hooks, detect the virtual machine... The goal of this driver is to offer the possibility for the user to choose between the classical userland analysis or a kernel analysis, which will be harder to detect or bypass.
 
@@ -8,6 +7,18 @@ Actually, it works for XP 32 bit and 7 32 bit/64 bit Windows machines.
 
 CHANGELOG
 =========
+
+To-do :
++ NtCreateThreadEx x64
++ Use cuckoomon syscalls logs
++ Dynamic-static analysis integration
++ Standalone (procmon-like) version :]
++ Use inverted IRP calls with kernel buffer instead of filter comm. ports :]
++ fix random socket desynch
+
+v0.9 changes :
++ cuckoo 1.2 compatibility
++ no need ActivePython anymore
 
 v0.8
 + dump a physical page of memory when an unknown region of code is executed. (x86-32 only)
@@ -31,7 +42,7 @@ v0.4
 + more anti VM detection features
 + log new loaded modules through ZwCreateSection() hook
 + shadow ssdt hook
-+ handle shutdown attempt through ExitWindowsEx() => abort analysis
++ handle shutdown attempt through ExitWindowsEx() in hooking NtUserCallOneParam() (shadow ssdt) => abort analysis
 
 v0.3
 + fix minor bugs
@@ -43,11 +54,15 @@ v0.3
 + ZwResumeThread hook
 + handle driver execution (abort analysis)
 
-
 v0.2
 + added ZwDeviceIoControlFile, ZwCreateMutant, ZwDelayExecution & ZwTerminateProcess SSDT hooks
-+ fixed deadlock bug (inifinte wait on FltSendMessage)
++ NtDeviceIoControlFile() hook
++ NtCreateMutant() hook
++ NtDelayExecution() hook
++ NtTerminateProcess() hook
++ Fixed deadlock issue (FltSendMessage infinite wait switched to 100ms timeout)
 + fixed performance issues (drop => patched using multithreading in logs_dispatcher)
+
 
 How it works
 ============
@@ -183,62 +198,6 @@ You'll find a list of such improvements to come in our development branch.
 
 Authors
 =======
+
 - Nicolas Correia
 - Adrien Chevalier
-=======
-zer0m0n v0.9 (DEVELOPMENT BRANCH)
-=================================
-
-To-do :
-+ NtCreateThreadEx x64
-+ Use cuckoomon syscalls logs
-+ Dynamic-static analysis integration
-+ Standalone (procmon-like) version :]
-+ Use inverted IRP calls with kernel buffer instead of filter comm. ports :]
-+ fix random socket desynch
-+ code cleaning
-
-v0.9 changes :
-+ cuckoo 1.2 compatibility
-+ no need ActivePython anymore
-
-v0.8 changes :
-+ Dump a physical page of memory when an unknown region of code is executed. (x86-32 only)
-
-v0.7 changes :
-+ x64 driver version !!
-
-v0.6 changes :
-+ handle files deletion (through NtDeleteFile, NtCreateFile/NtClose via FILE_DELETE_ON_CLOSE and NtSetInformationFile)
-+ cuckoo 1.1 compatibility
-
-v0.5 changes :
-+ bug fixes
-+ win7 support
-+ NtCreateUserProcess() hook 
-+ NtUserCallNoParam() hook 
-+ NtCreateThreadEx() hook 
-
-v0.4 changes :
-+ more anti VM detection features
-+ log new loaded modules through NtCreateSection hook 
-+ handle shutdown attempt through ExitWindowsEx() in hooking NtUserCallOneParam() (shadow ssdt) => abort analysis
-
-v0.3 changes :
-+ fix minor bugs
-+ fix NtTerminateProcess() race condition (notify analyzer.py of process termination)
-+ fix hook NtDelayExecution() => log the call before executing it
-+ Signatures :]
-+ some anti VM (virtualbox) detection features (based on pafish PoC)
-+ NtReadVirtualMemory() hook
-+ NtResumeThread() hook
-+ handle driver execution (abort analysis)
-
-v0.2 changes :
-+ NtDeviceIoControlFile() hook
-+ NtCreateMutant() hook
-+ NtDelayExecution() hook
-+ NtTerminateProcess() hook
-+ Fixed deadlock issue (FltSendMessage infinite wait switched to 100ms timeout)
-+ Fixed performance issues (drop) using userland app multithreading
->>>>>>> 3a248836c7ce9b05383174ddc4ec32b8a7ad7a9d

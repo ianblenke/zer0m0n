@@ -69,7 +69,7 @@ diff -rupN original/analyzer/windows/analyzer.py new/analyzer/windows/analyzer.p
              pid_check = False
  
          time_counter = 0
-+        kernel_analysis = self.get_options().get("kernel_analysis", None)
++        kernel_analysis = self.get_options().get("kernel_analysis", False)
  
          while True:
              time_counter += 1
